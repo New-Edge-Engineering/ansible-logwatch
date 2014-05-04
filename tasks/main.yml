@@ -22,12 +22,21 @@
     - logwatch
     - configuration
 
-- name: move logwatch cron from daily to weekly
-  shell: if [ -f /etc/cron.daily/00logwatch ]; then mv /etc/cron.daily/00logwatch /etc/cron.weekly/; echo "moved 00logwatch"; fi
-  register: move_result
-  changed_when: "move_result.stdout == 'moved 00logwatch'"
+- name: Logwatch | Remove logwatch's cronjob
+  file:
+    path: /etc/cron.daily/00logwatch
+    state: absent
+
+- name: add modified logwatch to "{{ logwatch_cron_time }}" cron
+  template:
+    src: 00logwatch.j2
+    dest: "/etc/cron.{{ logwatch_cron_time }}/00logwatch"
+    owner: root
+    group: root
+    mode: 0755
   tags:
     - logwatch
+    - cron
     - configuration
 
 - name: touch /var/cache/logwatch to stop logwatch failing (ubuntu 12.04)
