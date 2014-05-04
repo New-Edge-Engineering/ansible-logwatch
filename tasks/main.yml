@@ -5,7 +5,11 @@
     pkg: "{{item}}"
     state: present
   with_items:
+    - libdate-manip-perl
     - logwatch
+  tags:
+    - logwatch
+    - packages
 
 - name: Logwatch | Configure logwatch (/etc/logwatch/conf/logwatch.conf)
   template:
@@ -14,14 +18,21 @@
     owner: root
     group: root
     mode: 0644
+  - tags:
+    - logwatch
+    - configuration
 
-- name: Logwatch | Remove logwatch's cronjob
+- name: move logwatch cron from daily to weekly
+  shell: if [ -f /etc/cron.daily/00logwatch ]; then mv /etc/cron.daily/00logwatch /etc/cron.weekly/; echo "moved 00logwatch"; fi
+  register: move_result
+  changed_when: "move_result.stdout == 'moved 00logwatch'"
+  tags:
+    - logwatch
+    - configuration
+
+- name: touch /var/cache/logwatch to stop logwatch failing (ubuntu 12.04)
   file:
-    path: /etc/cron.daily/00logwatch
-    state: absent
-
-- name: Logwatch | Configure logwatch's cronjob
-  cron:
-    name: logwatch
-    job: /usr/sbin/logwatch
-    special_time: "{{logwatch_cron_time}}"
+    dest=/var/cache/logwatch
+    state=directory
+  tags:
+    - logwatch
