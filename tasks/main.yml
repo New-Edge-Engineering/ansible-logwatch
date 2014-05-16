@@ -27,7 +27,7 @@
     path: /etc/cron.daily/00logwatch
     state: absent
 
-- name: add modified logwatch to "{{ logwatch_cron_time }}" cron
+- name: add modified logwatch to {{ logwatch_cron_time }} cron
   template:
     src: 00logwatch.j2
     dest: "/etc/cron.{{ logwatch_cron_time }}/00logwatch"
