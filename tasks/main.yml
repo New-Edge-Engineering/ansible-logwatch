@@ -22,18 +22,24 @@
     - logwatch
     - configuration
 
-- name: Logwatch | Remove logwatch's cronjob
+- name: Logwatch | Remove daily logwatch cron file
   file:
     path: /etc/cron.daily/00logwatch
     state: absent
+  when: logwatch_cron_time != 'daily'
+  tags:
+    - logwatch
+    - cron
+    - configuration
 
-- name: add modified logwatch to {{ logwatch_cron_time }} cron
+- name: add logwatch cron file to appropriate directory
   template:
     src: 00logwatch.j2
     dest: "/etc/cron.{{ logwatch_cron_time }}/00logwatch"
     owner: root
     group: root
     mode: 0755
+  when: logwatch_cron_time != 'daily'
   tags:
     - logwatch
     - cron
