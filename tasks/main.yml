@@ -1,9 +1,10 @@
 # file: logwatch/tasks/main.yml
 
-- name: Logwatch | Make sure logwatch and its dependencies are installed
+- name: ensure software is installed
   apt:
     pkg: "{{item}}"
     state: present
+  when: ansible_os_family == 'Debian'
   with_items:
     - libdate-manip-perl
     - logwatch
@@ -11,7 +12,18 @@
     - logwatch
     - packages
 
-- name: Logwatch | Configure logwatch (/etc/logwatch/conf/logwatch.conf)
+- name: ensure software is installed
+  yum:
+    pkg: "{{item}}"
+    state: present
+  when: ansible_os_family == 'RedHat'
+  with_items:
+    - logwatch
+  tags:
+    - logwatch
+    - packages
+
+- name: ensure logwatch configure (/etc/logwatch/conf/logwatch.conf) is correct
   template:
     src: etc_logwatch_conf_logwatch.conf.j2
     dest: /etc/logwatch/conf/logwatch.conf
@@ -22,7 +34,7 @@
     - logwatch
     - configuration
 
-- name: Logwatch | Remove daily logwatch cron file
+- name: ensure there is no daily logwatch cron file
   file:
     path: /etc/cron.daily/00logwatch
     state: absent
@@ -32,7 +44,7 @@
     - cron
     - configuration
 
-- name: add logwatch cron file to appropriate directory
+- name: ensure logwatch cron files exist in appropriate directory
   template:
     src: 00logwatch.j2
     dest: "/etc/cron.{{ logwatch_cron_time }}/00logwatch"
