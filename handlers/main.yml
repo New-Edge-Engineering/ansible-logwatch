@@ -1,3 +1,6 @@
 ---
-- name: restart cron
-  service: name=cron state=restarted
+- name: logwatch restart cron
+  service:
+    name: "{% if ansible_os_family == 'RedHat' %}crond{% else %}cron{% endif %}"
+    state: restarted
+    enabled: true
