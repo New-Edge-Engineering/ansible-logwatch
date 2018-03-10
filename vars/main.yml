@@ -1,0 +1,3 @@
+---
+# this seem to change over time, but not 100% sure
+logwatch_cron_file_name: "0logwatch"

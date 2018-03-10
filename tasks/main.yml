@@ -36,7 +36,7 @@
 
 - name: ensure there is no daily logwatch cron file
   file:
-    path: /etc/cron.daily/00logwatch
+    path: "/etc/cron.daily/{{ logwatch_cron_file_name }}"
     state: absent
   when: logwatch_cron_time != 'daily'
   tags:
@@ -46,8 +46,8 @@
 
 - name: ensure logwatch cron files exist in appropriate directory
   template:
-    src: 00logwatch.j2
-    dest: "/etc/cron.{{ logwatch_cron_time }}/00logwatch"
+    src: logwatch.j2
+    dest: "/etc/cron.{{ logwatch_cron_time }}/{{ logwatch_cron_file_name }}"
     owner: root
     group: root
     mode: 0755

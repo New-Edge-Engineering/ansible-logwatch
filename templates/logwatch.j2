@@ -13,7 +13,7 @@ DATE=`date "+%e %B %Y"`
 YEAR=`date +%Y --date '7 days ago'`
 WEEK=`date +%U --date '7 days ago'`
 HOST=`hostname`
-SUBJECT="Mail server report ${HOST} for ${YEAR}/${WEEK} @ ${DATE}"
+SUBJECT="LogWatch Server Report ${HOST} for ${YEAR}/${WEEK} @ ${DATE}"
 LOGWATCH=/usr/sbin/logwatch
 
 ${LOGWATCH} --subject "$SUBJECT" --output mail
